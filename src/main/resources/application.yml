@@ -1,0 +1,55 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        processorInput:
+          destination: queue.paymentcard.input
+          binder: rabbit_local_paymentcard
+          group: processorConsumers          
+          
+        processorOutput:
+          destination: queue.paymentcard.output.processor
+          binder: rabbit_local_paymentcard
+        
+        sinkInput:
+          destination: queue.paymentcard.input
+          binder: rabbit_local_paymentcard
+          group: sinkConsumers
+          
+        sourceOutput:
+          destination: queue.paymentcard.output.source
+          binder: rabbit_local_paymentcard
+      binders:
+        rabbit_local_paymentcard:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: localhost
+                port: 5672
+                username: guest
+                password: guest
+                virtual-host: /
+
+logging:
+  level:
+    ROOT: INFO
+    com.stream.app: DEBUG
+
+management:
+  #Habilita endpoints asociados a los channels
+  endpoints:
+    web: 
+      exposure:
+        include: "*"
+  security:
+    enable: true
+  #Health habilitado
+  health:
+    #Información detallada sobre los bindings
+    show-details: ALWAYS
+    binders:
+       enabled: true         
+
+
+   
